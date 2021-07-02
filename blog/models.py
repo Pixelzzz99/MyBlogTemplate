@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from ckeditor_uploader.fields import RichTextUploadingField
 
+
 #creating manager
 class PublishedManager(models.Manager):
     def get_queryset(self):
@@ -20,7 +21,10 @@ class Post(models.Model):
     title = models.CharField( max_length=250, )
     slug = models.SlugField( max_length=250, unique_for_date='publish' )
     author = models.ForeignKey( User, on_delete=models.CASCADE, related_name='blog_posts')
-    #body = models.TextField()
+    
+    image = models.ImageField(upload_to='featured_image/%Y/%m/%d')
+
+    #body = models.TextField() 
     body = RichTextUploadingField()
 
     publish = models.DateTimeField( default=timezone.now )
