@@ -3,9 +3,16 @@ from django.views.decorators.csrf import ensure_csrf_cookie, requires_csrf_token
 from .models import Post, Comment
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .forms import CommentForm
+from django.db.models import Count
+from taggit.models import Tag
 
-def post_list(request):
+def post_list(request, tag_slug=None):
     posts = Post.published.all()
+
+    tag = None
+    if tag_slug:
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        posts = posts.filter(tags__in=[tag])
 
     paginator = Paginator(posts, 10) # 10 posts in each page
     page = request.GET.get('page')
@@ -22,11 +29,15 @@ def post_detail(request, post):
     post=get_object_or_404(Post,slug=post,status='published')
     # List of active comments for this post
     comments = post.comments.filter(active=True)
+
     new_comment = None
+
     if request.method == 'POST':
+
         # A comment was posted
         comment_form = CommentForm(data=request.POST)
         if comment_form.is_valid():
+
             # Create Comment object but don't save to database yet
             new_comment = comment_form.save(commit=False)
             # Assign the current post to the comment
@@ -37,7 +48,8 @@ def post_detail(request, post):
             return redirect(post.get_absolute_url()+'#'+str(new_comment.id))
     else:
         comment_form = CommentForm()
-    return render(request, 'blog/post_detail.html',{'post':post,'comments': comments,'comment_form':comment_form})
+
+    return render(request, 'blog/post_detail.html',{'post':post, 'comments': comments, 'comment_form': comment_form})
 
 def reply_page(request):
     if request.method == 'POST':

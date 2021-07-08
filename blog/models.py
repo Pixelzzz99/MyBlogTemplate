@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
 from ckeditor_uploader.fields import RichTextUploadingField
-
+from taggit.managers import TaggableManager
 
 #creating manager
 class PublishedManager(models.Manager):
@@ -47,6 +47,9 @@ class Post(models.Model):
 
     def get_comments(self):
         return self.comments.filter(parent=None).filter(active=True)
+
+    tags = TaggableManager()
+
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
