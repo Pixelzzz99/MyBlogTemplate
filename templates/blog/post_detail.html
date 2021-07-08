@@ -1,13 +1,13 @@
 {% extends 'blog/base.html' %} 
-{% block title %} - {{post.title}}{% endblock title%} 
+{% block title %} - {{post.title}} {% endblock title%} 
 {% block content %}
 <article>
   <figure>
-      <img
-        src="{{ post.image.url }}"
-        class="rounded img-contain"
-        alt="{{post.title}}"
-      />
+    <img
+      src="{{ post.image.url }}"
+      class="rounded img-contain"
+      alt="{{post.title}}"
+    />
   </figure>
   <div class="mt-3">
     <h1>{{post.title}}</h1>
@@ -17,4 +17,27 @@
   </div>
   <div class="article-body">{{post.body|safe}}</div>
 </article>
+
+<hr/>
+        <h3>Add Comment</h3>
+        <form method="post" action="">
+            {% csrf_token %}
+            {{ comment_form.as_p }}
+            <button type="submit" class="btn btn-primary">Comment</button>
+        </form>
+    
+        {% with comments.count as total_comments %}
+            <h3 class="mt-5">
+                {{ total_comments }} comment{{ total_comments|pluralize }}
+            </h3>
+        {% endwith %}
+        {% if not post.comments.all %}
+            No comments yet
+        
+        {% else %}
+            {% for comment in post.get_comments %}
+                {% include 'blog/comment.html' with comment=comment %}
+            {% endfor %}
+        {% endif %}
+
 {% endblock content %}

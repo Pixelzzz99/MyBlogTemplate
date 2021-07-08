@@ -21,7 +21,7 @@ class Post(models.Model):
     title = models.CharField( max_length=250, )
     slug = models.SlugField( max_length=250, unique_for_date='publish' )
     author = models.ForeignKey( User, on_delete=models.CASCADE, related_name='blog_posts')
-    
+
     image = models.ImageField(upload_to='featured_image/%Y/%m/%d')
 
     #body = models.TextField() 
@@ -31,8 +31,8 @@ class Post(models.Model):
     created = models.DateTimeField( auto_now_add=True )
     updated = models.DateTimeField( auto_now=True )
 
-    status = models.CharField( max_length=10, choices=STATUS_CHOICES, default='draft') 
-    
+    status = models.CharField( max_length=10, choices=STATUS_CHOICES, default='draft')
+
     class Meta:
         ordering = ('-publish',)
 
@@ -41,10 +41,10 @@ class Post(models.Model):
 
     objects = models.Manager() #default manager
     published = PublishedManager() #my custom manager
-    
+
     def get_absolute_url(self):
         return reverse('blog:post_detail', args=[self.slug])
-    
+
     def get_comments(self):
         return self.comments.filter(parent=None).filter(active=True)
 
@@ -59,15 +59,13 @@ class Comment(models.Model):
     updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
 
-    
     class Meta:
         ordering = ("created",)
 
     def __str__(self):
         return self.body
-    
+
     def get_comments(self):
         return Comment.objects.filter(parent=self).filter(active=True)
-
 
 
