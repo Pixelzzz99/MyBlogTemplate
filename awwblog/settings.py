@@ -101,6 +101,9 @@ CKEDITOR_CONFIGS = {
         ]),
     }
 }
+
+SITE_ID = 1
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -114,6 +117,8 @@ INSTALLED_APPS = [
     'ckeditor',
     'ckeditor_uploader',  # this
     'taggit',
+    'django.contrib.sites',
+    'django.contrib.sitemaps',
 ]
 
 TAGGIT_CASE_INSENSITIVE = True
