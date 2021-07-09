@@ -33,7 +33,6 @@ def post_detail(request, post):
     new_comment = None
 
     if request.method == 'POST':
-
         # A comment was posted
         comment_form = CommentForm(data=request.POST)
         if comment_form.is_valid():
@@ -46,10 +45,15 @@ def post_detail(request, post):
             new_comment.save()
             # redirect to same page and focus on that comment
             return redirect(post.get_absolute_url()+'#'+str(new_comment.id))
+
     else:
         comment_form = CommentForm()
 
-    return render(request, 'blog/post_detail.html',{'post':post, 'comments': comments, 'comment_form': comment_form})
+    post_tags_ids = post.tags.values_list('id', flat=True)
+    similar_posts = Post.published.filter(tags__in=post_tags_ids).exclude(id=post.id)
+    similar_posts = similar_posts.annotate(same_tags=Count('tags')).order_by('-same_tags', '-publish')[:6]
+
+    return render(request, 'blog/post_detail.html',{'post':post, 'comments': comments, 'comment_form': comment_form, 'similar_posts':similar_posts,})
 
 def reply_page(request):
     if request.method == 'POST':
@@ -69,7 +73,6 @@ def reply_page(request):
             return redirect(post_url + '#' + str(reply.id))
 
     return redirect('/')
-
 
 
 
