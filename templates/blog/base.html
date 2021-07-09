@@ -56,13 +56,18 @@
                         </ul>
 					</li>	
                 </ul>
-				<form class="d-flex">
-					<input class="form-control mr-0" type="search" placeholder="Search" aria-label="Search">
+				<form class="d-flex" action="/">
+					<input class="form-control mr-0" type="search" value="{{request.GET.q}}" name="q" placeholder="Search" aria-label="Search">
 				</form>
 			</div>
 		</div>
 	</nav>
 	<main class="container my-3">
+		<h2 class="my-3">
+			{% if request.GET.q is not null %}
+				Search Results for "{{ request.GET.q }}"
+			{% endif %}
+		</h2>
 		{%block content %}
 
 		{% endblock content%}
